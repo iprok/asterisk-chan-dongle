@@ -181,7 +181,11 @@
 		  ...
 */
 
+/* 3GPP TS 23.040 */
 #define NUMBER_TYPE_INTERNATIONAL		0x91
+#define NUMBER_TYPE_NETWORKSHORT		0xB1
+#define NUMBER_TYPE_UNKNOWN			0x81
+
 
 /* Message Type Indicator Parameter */
 #define PDUTYPE_MTI_SHIFT			0
@@ -562,8 +566,15 @@ EXPORT_DEF int pdu_build(char* buffer, size_t length, const char* sca, const cha
 	if(sca[0] == '+')
 		sca++;
 
-	if(dst[0] == '+')
+	if(dst[0] == '+') {
 		dst++;
+	} else {
+		if (strlen(dst)<6) {
+			dst_toa=NUMBER_TYPE_NETWORKSHORT; // 0xb1
+		} else {
+			dst_toa=NUMBER_TYPE_UNKNOWN; // 0x81
+		}
+	}
 
 	/* count length of strings */
 	sca_len = strlen(sca);
